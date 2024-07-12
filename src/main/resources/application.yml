@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: real-world
+  datasource:
+    url: jdbc:postgresql://localhost:5432/real_world
+    username: postgres
+    password: postgres
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
