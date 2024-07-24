@@ -1,4 +1,4 @@
-package com.realworld.api;
+package com.realworld.api.user;
 
 public class UserNotFoundException extends RuntimeException{
 

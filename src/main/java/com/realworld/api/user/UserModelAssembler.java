@@ -1,4 +1,4 @@
-package com.realworld.api;
+package com.realworld.api.user;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

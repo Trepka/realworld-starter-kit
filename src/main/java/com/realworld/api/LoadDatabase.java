@@ -1,5 +1,7 @@
 package com.realworld.api;
 
+import com.realworld.api.user.User;
+import com.realworld.api.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -13,8 +15,10 @@ public class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new User("Bilbo Baggins", "baggins@gmail.com", "bilbo123")));
-            log.info("Preloading " + repository.save(new User("Frodo Baggins", "bagginsf@gmail.com", "frodo456")));
+            log.info("Preloading " + repository.save(new User(
+                    "Bilbo", "Baggins", "baggins@gmail.com", "bilbo123")));
+            log.info("Preloading " + repository.save(new User(
+                    "Frodo", "Baggins", "bagginsf@gmail.com", "frodo456")));
         };
     }
 }

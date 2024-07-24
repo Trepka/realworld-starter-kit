@@ -1,13 +1,13 @@
-package com.realworld.api;
+package com.realworld.api.user;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -27,16 +27,17 @@ public class UserController {
     @GetMapping("/users")
     CollectionModel<EntityModel<User>> all() {
         List<EntityModel<User>> users = userRepository.findAll().stream()
-                .map(user -> EntityModel.of(user,
-                        linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
-                        linkTo(methodOn(UserController.class).all()).withRel("users")))
+                .map(userModelAssembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(users, linkTo(methodOn(UserController.class).all()).withSelfRel());
     }
 
     @PostMapping("/users")
-    User newUser(@RequestBody User newUser) {
-        return userRepository.save(newUser);
+    ResponseEntity<?> newUser(@RequestBody User newUser) {
+        EntityModel<User> entityModel = userModelAssembler.toModel(userRepository.save(newUser));
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @GetMapping("/users/{id}")
@@ -47,8 +48,8 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    User replaceUser(@RequestBody User newUser, @PathVariable Long id) {
-        return userRepository.findById(id)
+    ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
+        User updateUser = userRepository.findById(id)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
                     user.setEmail(newUser.getEmail());
@@ -58,10 +59,18 @@ public class UserController {
                 .orElseGet(() -> {
                     return userRepository.save(newUser);
                 });
+
+        EntityModel<User> entityModel = userModelAssembler.toModel(updateUser);
+
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @DeleteMapping("/users/{id}")
-    void deleteUser(@PathVariable Long id) {
+    ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

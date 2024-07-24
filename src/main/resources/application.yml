@@ -2,7 +2,7 @@ spring:
   application:
     name: real-world
   datasource:
-    url: jdbc:postgresql://localhost:5432/real_world
+    url: jdbc:postgresql://localhost:6543/real_world_db
     username: postgres
     password: postgres
   jpa:
@@ -10,3 +10,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+server:
+  port : 8081
